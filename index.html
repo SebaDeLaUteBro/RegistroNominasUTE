@@ -4,19 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Nóminas - Docentes</title>
-    <!-- Fuente moderna -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Efectos de fondo abstracto -->
     <div class="bg-shape shape-1"></div>
     <div class="bg-shape shape-2"></div>
-
     <div class="app-container" id="app-content" style="display: none;">
-        <!-- Barra lateral (Sidebar) -->
         <aside class="sidebar glass-panel">
             <div class="sidebar-header">
                 <img src="logo.png" alt="UTE Logo" class="logo-img">
@@ -41,10 +36,7 @@
                 <p style="font-size: 0.7rem; margin-top: 5px;">Universidad Tecnológica General Mariano Escobedo</p>
             </div>
         </aside>
-
-        <!-- Contenido Principal -->
         <main class="main-content">
-            <!-- Barra superior -->
             <header class="topbar glass-panel">
                 <div class="topbar-title">
                     <h1 id="page-title">Dashboard</h1>
@@ -57,16 +49,12 @@
                             <span class="user-role">Recursos Humanos</span>
                         </div>
                     </div>
-                    
                     <button id="btn-logout" class="btn btn-danger btn-icon" title="Cerrar Sesión" style="width: 40px; height: 40px; border-radius: 12px; margin-left: 10px;">
                         <i class="fa-solid fa-power-off"></i>
                     </button>
                 </div>
             </header>
-
-            <!-- Contenedor de Vistas -->
             <div class="views-container">
-                <!-- VISTA: Dashboard -->
                 <section id="dashboard" class="view active">
                     <div class="stats-grid">
                         <div class="stat-card glass-panel fade-in" style="animation-delay: 0.1s">
@@ -109,8 +97,6 @@
                         </div>
                     </div>
                 </section>
-
-                <!-- VISTA: Docentes -->
                 <section id="docentes" class="view">
                     <div class="view-header fade-in">
                         <h2>Directorio de Docentes</h2>
@@ -137,7 +123,6 @@
                                 </tr>
                             </thead>
                             <tbody id="tabla-docentes">
-                                <!-- Filas generadas por Javascript -->
                             </tbody>
                         </table>
                         <div id="empty-docentes" class="empty-state" style="display: none;">
@@ -146,8 +131,6 @@
                         </div>
                     </div>
                 </section>
-
-                <!-- VISTA: Nóminas -->
                 <section id="nominas" class="view">
                     <div class="view-header fade-in">
                         <h2>Generador de Nóminas</h2>
@@ -189,23 +172,18 @@
                                 </button>
                             </form>
                         </div>
-                        
                         <div class="glass-panel receipt-panel">
                             <h3><i class="fa-solid fa-receipt"></i> Recibo de Nómina</h3>
                             <div id="recibo-placeholder" class="empty-state">
                                 <i class="fa-solid fa-print"></i>
                                 <p>Llena el formulario para generar un recibo</p>
                             </div>
-                            <!-- Aquí se inyecta el recibo generado -->
                             <div id="recibo-resultado" style="display: none;">
-                                <!-- Llenado por JS -->
                             </div>
                         </div>
                     </div>
                 </section>
             </div>
-                
-                <!-- VISTA: Historial -->
                 <section id="historial" class="view">
                     <div class="view-header fade-in">
                         <h2>Historial de Nóminas Generadas</h2>
@@ -227,7 +205,6 @@
                                 </tr>
                             </thead>
                             <tbody id="tabla-historial">
-                                <!-- Filas generadas por Javascript -->
                             </tbody>
                         </table>
                         <div id="empty-historial" class="empty-state" style="display: none;">
@@ -236,8 +213,6 @@
                         </div>
                     </div>
                 </section>
-                
-                <!-- VISTA: Perfil Docente (Nueva) -->
                 <section id="perfil-docente" class="view">
                     <div class="view-header fade-in">
                         <div style="display: flex; gap: 16px; align-items: center;">
@@ -247,7 +222,6 @@
                             <h2>Expediente del Docente</h2>
                         </div>
                     </div>
-                    
                     <div class="profile-card glass-panel fade-in" style="animation-delay: 0.1s; padding: 24px; display: flex; gap: 32px; align-items: center; margin-bottom: 24px;">
                         <div class="profile-avatar" style="width: 100px; height: 100px; border-radius: 24px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; flex-shrink: 0; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);">
                             <i class="fa-solid fa-user-graduate"></i>
@@ -262,7 +236,6 @@
                                     </div>
                                 </div>
                             </div>
-                            
                             <div style="display: flex; gap: 16px; flex-wrap: wrap;">
                                 <div style="background: rgba(0,0,0,0.03); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); min-width: 140px;">
                                     <span style="display:block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;"><i class="fa-solid fa-id-card"></i> N° Empleado</span>
@@ -287,7 +260,6 @@
                             </div>
                         </div>
                     </div>
-                    
                     <h3 style="margin-bottom: 16px; font-size: 1.2rem; font-weight: 700;">Recibos Recientes</h3>
                     <div class="table-container glass-panel fade-in" style="animation-delay: 0.2s">
                         <table class="data-table">
@@ -301,7 +273,6 @@
                                 </tr>
                             </thead>
                             <tbody id="tabla-perfil-recibos">
-                                <!-- Filas generadas por Javascript -->
                             </tbody>
                         </table>
                         <div id="empty-perfil" class="empty-state" style="display: none; padding: 40px 20px;">
@@ -313,8 +284,6 @@
             </div>
         </main>
     </div>
-
-    <!-- PANTALLA DE LOGIN (Nueva) -->
     <div id="login-screen" class="login-container">
         <div class="glass-panel login-panel">
             <div class="login-header">
@@ -347,8 +316,15 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal Formulario Docente -->
+    <div class="modal" id="modal-ver-recibo">
+        <div class="modal-content glass-panel" style="max-width: 650px;">
+            <div class="modal-header" style="margin-bottom: 20px;">
+                <h2 id="modal-recibo-title">Detalle del Recibo</h2>
+                <button class="close-btn" id="btn-close-recibo"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div id="recibo-modal-contenido"></div>
+        </div>
+    </div>
     <div class="modal" id="modal-docente">
         <div class="modal-content glass-panel">
             <div class="modal-header">
@@ -393,7 +369,6 @@
             </form>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
