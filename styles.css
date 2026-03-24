@@ -1,43 +1,31 @@
-/* =========================================
-   VARIABLES AURORA GLASS (Premium Light Mode)
-========================================= */
 :root {
-    --bg-base: #f8fafc; /* light slate base */
+    --bg-base: #f8fafc; 
     --card-bg: rgba(255, 255, 255, 0.82);
     --card-border: rgba(255, 255, 255, 1);
     --text-main: #0f172a;
     --text-muted: #475569;
-    --primary: #008D97; /* UTE Teal */
+    --primary: #008D97; 
     --primary-hover: #00767e;
-    --secondary: #0ea5e9; /* Azure */
+    --secondary: #0ea5e9; 
     --danger: #ef4444;
     --success: #10b981;
     --glass-shadow: 0 10px 40px -10px rgba(0,0,0,0.06);
     --glass-blur: blur(28px);
 }
-
-/* =========================================
-   RESET Y TIPOGRAFÍA
-========================================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Outfit', sans-serif;
 }
-
 body {
     background-color: var(--bg-base);
     color: var(--text-main);
-    overflow: hidden; /* App estilo escritorio */
+    overflow: hidden; 
     position: relative;
     height: 100vh;
     width: 100vw;
 }
-
-/* =========================================
-   EFECTOS DE FONDO (Aurora Animated Mesh)
-========================================= */
 .bg-shape {
     position: absolute;
     filter: blur(100px);
@@ -78,53 +66,37 @@ body::after {
     opacity: 0.4;
     animation: blobBounce 22s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 @keyframes blobBounce {
     0% { transform: translate(0, 0) scale(1); }
     33% { transform: translate(50px, -80px) scale(1.1); }
     66% { transform: translate(-40px, 40px) scale(0.9); }
     100% { transform: translate(0, 0) scale(1); }
 }
-
-/* =========================================
-   Badges (Estados)
-========================================= */
 .badge-active {
     background: rgba(16, 185, 129, 0.15);
     color: #059669;
     border: 1px solid rgba(16, 185, 129, 0.3);
 }
-
 .badge-inactive {
     background: rgba(239, 68, 68, 0.15);
     color: #dc2626;
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
-
-/* =========================================
-   UTILIDADES GLASSMORPHISM
-========================================= */
 .glass-panel {
     background: var(--card-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--card-border);
-    border-radius: 24px; /* Más redondeado */
+    border-radius: 24px; 
     box-shadow: var(--glass-shadow);
     transition: box-shadow 0.4s ease, transform 0.4s ease;
 }
-
-/* =========================================
-   LAYOUT PRINCIPAL
-========================================= */
 .app-container {
     display: flex;
     height: 100vh;
     padding: 24px;
     gap: 24px;
 }
-
-/* SIdebar */
 .sidebar {
     width: 280px;
     display: flex;
@@ -132,14 +104,12 @@ body::after {
     padding: 28px 24px;
     z-index: 10;
 }
-
 .sidebar-header {
     display: flex;
     align-items: center;
     gap: 16px;
     margin-bottom: 48px;
 }
-
 .logo-img {
     width: 52px;
     height: 52px;
@@ -150,12 +120,10 @@ body::after {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     animation: floatLogo 4s ease-in-out infinite;
 }
-
 @keyframes floatLogo {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
 }
-
 .sidebar-header h2 {
     font-size: 1.6rem;
     font-weight: 800;
@@ -165,14 +133,12 @@ body::after {
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.5px;
 }
-
 .sidebar-nav {
     display: flex;
     flex-direction: column;
     gap: 12px;
     flex-grow: 1;
 }
-
 .nav-btn {
     background: transparent;
     border: none;
@@ -190,7 +156,6 @@ body::after {
     position: relative;
     overflow: hidden;
 }
-
 .nav-btn::before {
     content: '';
     position: absolute;
@@ -200,40 +165,32 @@ body::after {
     z-index: -1;
     border-radius: 16px;
 }
-
 .nav-btn:hover {
     color: var(--primary);
     transform: translateX(6px);
 }
-
 .nav-btn:hover::before {
     width: 100%;
 }
-
 .nav-btn.active {
     background: linear-gradient(135deg, var(--primary), #0ea5e9);
     color: white;
     box-shadow: 0 10px 25px rgba(0, 141, 151, 0.35);
 }
-
 .nav-btn.active i {
     animation: popIcon 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 @keyframes popIcon {
     0% { transform: scale(1); }
     50% { transform: scale(1.4) rotate(10deg); }
     100% { transform: scale(1); }
 }
-
 .sidebar-footer {
     text-align: center;
     font-size: 0.85rem;
     color: var(--text-muted);
     font-weight: 500;
 }
-
-/* Contenido Principal */
 .main-content {
     flex-grow: 1;
     display: flex;
@@ -241,7 +198,6 @@ body::after {
     gap: 24px;
     overflow: hidden;
 }
-
 .topbar {
     display: flex;
     justify-content: space-between;
@@ -249,7 +205,6 @@ body::after {
     padding: 18px 32px;
     flex-shrink: 0;
 }
-
 .topbar-title h1 {
     font-size: 1.6rem;
     font-weight: 800;
@@ -258,7 +213,6 @@ body::after {
     position: relative;
     display: inline-block;
 }
-
 .topbar-title h1::after {
     content: '';
     position: absolute;
@@ -269,7 +223,6 @@ body::after {
     background: linear-gradient(90deg, var(--primary), var(--secondary));
     border-radius: 2px;
 }
-
 .topbar-user {
     display: flex;
     align-items: center;
@@ -279,15 +232,12 @@ body::after {
     border-radius: 100px;
     transition: background 0.3s;
 }
-
 .topbar-user:hover {
     background: rgba(255, 255, 255, 0.5);
 }
-
 .topbar-user:hover .avatar {
     transform: rotate(10deg) scale(1.1);
 }
-
 .avatar {
     width: 48px;
     height: 48px;
@@ -301,26 +251,19 @@ body::after {
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-shadow: 0 8px 15px rgba(0, 141, 151, 0.3);
 }
-
 .user-info {
     display: flex;
     flex-direction: column;
 }
-
 .user-name {
     font-weight: 700;
     font-size: 1rem;
 }
-
 .user-role {
     font-size: 0.85rem;
     color: var(--text-muted);
     font-weight: 500;
 }
-
-/* =========================================
-   SISTEMA DE VISTAS (SPA)
-========================================= */
 .views-container {
     flex-grow: 1;
     position: relative;
@@ -329,8 +272,6 @@ body::after {
     padding-right: 12px;
     padding-bottom: 24px;
 }
-
-/* Scrollbar personalizado */
 .views-container::-webkit-scrollbar { width: 8px; }
 .views-container::-webkit-scrollbar-track { background: transparent; }
 .views-container::-webkit-scrollbar-thumb { 
@@ -340,37 +281,27 @@ body::after {
 .views-container::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.2);
 }
-
 .view {
     display: none;
 }
-
 .view.active {
     display: block;
     animation: scaleInView 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
 @keyframes scaleInView {
     0% { opacity: 0; transform: scale(0.97) translateY(15px); filter: blur(4px); }
     100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
 }
-
-/* =========================================
-   COMPONENTES
-========================================= */
 .view-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 28px;
 }
-
 h2 {
     font-weight: 700;
     font-size: 1.4rem;
 }
-
-/* Botones */
 .btn {
     padding: 12px 24px;
     border-radius: 14px;
@@ -386,49 +317,40 @@ h2 {
     position: relative;
     overflow: hidden;
 }
-
 .btn::after {
     content: ''; 
     position: absolute; width: 100%; height: 100%; top: 0; left: -100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
     transition: left 0.5s ease;
 }
-
 .btn:hover::after { left: 100%; }
-
 .btn-primary {
     background: linear-gradient(135deg, var(--primary), #0ea5e9);
     color: white;
     box-shadow: 0 8px 20px rgba(0, 141, 151, 0.3);
 }
-
 .btn-primary:hover {
     transform: translateY(-4px) scale(1.02);
     box-shadow: 0 12px 25px rgba(0, 141, 151, 0.4);
 }
-
 .btn-secondary {
     background: rgba(0, 0, 0, 0.05);
     color: var(--text-main);
 }
-
 .btn-secondary:hover {
     background: rgba(0, 0, 0, 0.08);
     transform: translateY(-2px);
 }
-
 .btn-danger {
     background: rgba(239, 68, 68, 0.1);
     color: var(--danger);
 }
-
 .btn-danger:hover {
     background: var(--danger);
     color: white;
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3);
 }
-
 .btn-icon {
     padding: 8px;
     width: 42px;
@@ -438,18 +360,14 @@ h2 {
     justify-content: center;
     align-items: center;
 }
-
 .w-100 { width: 100%; }
 .mt-4 { margin-top: 20px; }
-
-/* Dashboard Tarjetas */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 24px;
     margin-bottom: 32px;
 }
-
 .stat-card {
     padding: 28px;
     display: flex;
@@ -459,7 +377,6 @@ h2 {
 .stat-card:hover {
     transform: translateY(-8px);
 }
-
 .stat-icon {
     width: 72px;
     height: 72px;
@@ -470,11 +387,9 @@ h2 {
     font-size: 2.2rem;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .stat-card:hover .stat-icon {
     transform: scale(1.15) rotate(8deg);
 }
-
 .icon-blue { 
     background: linear-gradient(135deg, #60a5fa, #3b82f6); 
     color: white; 
@@ -485,7 +400,6 @@ h2 {
     color: white; 
     box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); 
 }
-
 .stat-info h3 {
     font-size: 1rem;
     color: var(--text-muted);
@@ -500,8 +414,6 @@ h2 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
-/* Banner Dashboard */
 .welcome-banner {
     padding: 40px;
     display: flex;
@@ -511,32 +423,27 @@ h2 {
     overflow: hidden;
     background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 100%);
 }
-
 .welcome-banner::before {
     content: '';
     position: absolute; right: 0; top: 0; height: 100%; width: 50%;
     background: radial-gradient(circle at top right, rgba(0, 141, 151, 0.15), transparent 70%);
 }
-
 .banner-content {
     position: relative;
     z-index: 1;
 }
-
 .banner-content h2 {
     font-size: 2.2rem;
     font-weight: 800;
     margin-bottom: 16px;
     letter-spacing: -0.5px;
 }
-
 .banner-content p {
     color: var(--text-muted);
     font-size: 1.1rem;
     max-width: 600px;
     line-height: 1.6;
 }
-
 .banner-icon {
     font-size: 180px;
     position: absolute;
@@ -547,26 +454,21 @@ h2 {
     transform: rotate(-15deg);
     transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .welcome-banner:hover .banner-icon {
     transform: rotate(0deg) scale(1.1);
 }
-
-/* Tablas */
 .table-container {
     padding: 12px;
 }
 .data-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 8px; /* Espacio entre filas */
+    border-spacing: 0 8px; 
 }
-
 .data-table th, .data-table td {
     padding: 18px 24px;
     text-align: left;
 }
-
 .data-table th {
     color: var(--text-muted);
     font-weight: 700;
@@ -575,34 +477,27 @@ h2 {
     letter-spacing: 1px;
     padding-bottom: 12px;
 }
-
 .data-table tbody tr {
     background: rgba(255, 255, 255, 0.5);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .data-table tbody tr td:first-child {
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
 }
-
 .data-table tbody tr td:last-child {
     border-top-right-radius: 16px;
     border-bottom-right-radius: 16px;
 }
-
 .data-table tbody tr:hover {
     background: rgba(255, 255, 255, 0.9);
     transform: scale(1.01) translateX(4px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
-
 .actions-cell {
     display: flex;
     gap: 8px;
 }
-
-/* Formularios y Inputs */
 .form-group { margin-bottom: 24px; }
 .form-group label {
     display: block;
@@ -646,8 +541,6 @@ input:focus, select:focus {
 .input-icon input:focus + i, .input-icon:focus-within i {
     color: var(--primary);
 }
-
-/* Grid de Nómina */
 .nomina-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -664,8 +557,6 @@ input:focus, select:focus {
     color: var(--primary);
     font-size: 1.4rem;
 }
-
-/* Estado Vacío */
 .empty-state {
     text-align: center;
     padding: 80px 20px;
@@ -680,13 +571,10 @@ input:focus, select:focus {
     -webkit-text-fill-color: transparent;
     animation: floatEmpty 3s ease-in-out infinite;
 }
-
 @keyframes floatEmpty {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-15px); }
 }
-
-/* Recibo Generado */
 .receipt-wrapper {
     background: #ffffff;
     color: #1e293b;
@@ -726,8 +614,6 @@ input:focus, select:focus {
     padding: 20px;
     border-radius: 12px;
 }
-
-/* Modal */
 .modal {
     display: flex;
     position: fixed;
@@ -742,12 +628,10 @@ input:focus, select:focus {
     pointer-events: none;
     transition: opacity 0.3s ease;
 }
-
 .modal.active {
     opacity: 1;
     pointer-events: auto;
 }
-
 .modal-content {
     width: 100%;
     max-width: 550px;
@@ -760,20 +644,16 @@ input:focus, select:focus {
     transform: scale(0.9) translateY(20px);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .modal.active .modal-content {
     transform: scale(1) translateY(0);
 }
-
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
 }
-
 .modal-title { font-size: 1.6rem; }
-
 .close-btn {
     background: rgba(0,0,0,0.05);
     border: none;
@@ -792,48 +672,33 @@ input:focus, select:focus {
     color: white;
     transform: rotate(90deg) scale(1.1);
 }
-
 .modal-actions {
     display: flex;
     gap: 16px;
     margin-top: 36px;
 }
-
-/* =========================================
-   ANIMACIONES COMUNES Y STAGGERING
-========================================= */
 .fade-in {
     opacity: 0;
     animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
-/* Animación en cascada para filas de tabla generadas por JS */
 @keyframes rowEntrance {
     from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
 }
-
 .data-table tbody tr {
     opacity: 0;
     animation: rowEntrance 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
-
-/* Animaciones escalonadas automáticas (hasta 10 elementos) */
 .data-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
 .data-table tbody tr:nth-child(2) { animation-delay: 0.15s; }
 .data-table tbody tr:nth-child(3) { animation-delay: 0.2s; }
 .data-table tbody tr:nth-child(4) { animation-delay: 0.25s; }
 .data-table tbody tr:nth-child(5) { animation-delay: 0.3s; }
 .data-table tbody tr:nth-child(n+6) { animation-delay: 0.35s; }
-
-/* =========================================
-   PANTALLA DE LOGIN
-========================================= */
 .login-container {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
@@ -841,11 +706,8 @@ input:focus, select:focus {
     align-items: center;
     justify-content: center;
     z-index: 2000;
-    background: var(--bg-base); /* Mismo fondo de la app */
+    background: var(--bg-base); 
 }
-
-/* Reusamos la animación Aurora Mesh para el login, ya se ve en el body por la transparencia del panel */
-
 .login-panel {
     width: 100%;
     max-width: 440px;
@@ -853,26 +715,136 @@ input:focus, select:focus {
     box-shadow: 0 30px 60px -15px rgba(0,0,0,0.15);
     animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
 .login-header {
     text-align: center;
     margin-bottom: 36px;
 }
-
 .login-header .logo-img {
     width: 80px; height: 80px;
     border-radius: 20px;
     padding: 12px;
     margin-bottom: 20px;
 }
-
 .login-header h2 {
     font-size: 1.8rem;
     font-weight: 800;
     margin-bottom: 8px;
     color: var(--text-main);
 }
-
 .login-header p {
     color: var(--text-muted);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .app-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        padding: 12px;
+        gap: 12px;
+    }
+    body {
+        overflow: auto;
+    }
+    .sidebar {
+        width: 100%;
+        flex-direction: column;
+        padding: 20px;
+    }
+    .sidebar-header {
+        margin-bottom: 20px;
+        justify-content: center;
+    }
+    .sidebar-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .nav-btn {
+        flex: 1 1 calc(50% - 10px);
+        justify-content: center;
+    }
+    .sidebar-footer {
+        display: none;
+    }
+    .main-content {
+        overflow: visible;
+    }
+    .views-container {
+        overflow: visible;
+        padding-right: 0;
+    }
+    .nomina-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 768px) {
+    .nav-btn {
+        flex: 1 1 100%;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .profile-card {
+        flex-direction: column;
+        align-items: center !important;
+        text-align: center;
+    }
+    .profile-details {
+        width: 100%;
+    }
+    .topbar {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    .view-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    .view-header .input-icon {
+        width: 100% !important;
+    }
+    .view-header div {
+        flex-direction: column;
+    }
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .data-table {
+        min-width: 650px;
+    }
+}
+@media print {
+    .sidebar, .topbar, .view-header, .no-print {
+        display: none !important;
+    }
+    .app-container {
+        padding: 0;
+        display: block;
+    }
+    .views-container {
+        overflow: visible;
+        height: auto;
+    }
+    .receipt-wrapper {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    body {
+        overflow: visible;
+        background: white;
+    }
+    .glass-panel {
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        background: white;
+    }
+    .bg-shape {
+        display: none;
+    }
 }
