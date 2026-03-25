@@ -1,5 +1,5 @@
-const COSTO_FALTA = 150.00; 
-const COSTO_RETARDO = 50.00; 
+const COSTO_FALTA = 150.00;
+const COSTO_RETARDO = 50.00;
 let docentes = JSON.parse(localStorage.getItem('edupay_docentes')) || [];
 let historialRecibos = JSON.parse(localStorage.getItem('edupay_historial')) || [];
 let editandoId = null;
@@ -63,7 +63,7 @@ window.addEventListener('popstate', (e) => {
         } else {
             history.pushState({ page: 'app' }, 'App', '#app');
         }
-    } 
+    }
     else if (e.state.page === 'app' && e.state.view) {
         if (!isAuthenticated) return;
         const btn = document.querySelector(`.nav-btn[data-target="${e.state.view}"]`);
@@ -130,7 +130,7 @@ formDocente.addEventListener('submit', (e) => {
     const nombre = document.getElementById('docente-nombre').value;
     const depto = document.getElementById('docente-depto').value;
     const tarifa = parseFloat(document.getElementById('docente-tarifa').value);
-    const estado = document.getElementById('docente-estado').value; 
+    const estado = document.getElementById('docente-estado').value;
     if (editandoId) {
         const index = docentes.findIndex(d => d.id === editandoId);
         docentes[index] = { id: editandoId, matricula, nombre, depto, tarifa, estado };
@@ -153,8 +153,8 @@ function renderizarTabla(filtro = '') {
     const emptyState = document.getElementById('empty-docentes');
     const table = document.querySelector('#docentes .data-table');
     tbody.innerHTML = '';
-    const docentesFiltrados = docentes.filter(d => 
-        d.nombre.toLowerCase().includes(filtro) || 
+    const docentesFiltrados = docentes.filter(d =>
+        d.nombre.toLowerCase().includes(filtro) ||
         d.matricula.toLowerCase().includes(filtro)
     );
     if (docentesFiltrados.length === 0) {
@@ -235,7 +235,7 @@ document.getElementById('form-nomina').addEventListener('submit', (e) => {
     const totalPenalizaciones = penalizacionFaltas + penalizacionRetardos;
     const deduccionSeguroISRMonto = subtotalBruto * (deduccionesPct / 100);
     let totalNeto = subtotalBruto - deduccionSeguroISRMonto - totalPenalizaciones;
-    if (totalNeto < 0) totalNeto = 0; 
+    if (totalNeto < 0) totalNeto = 0;
     const nuevoRecibo = {
         id: 'REC-' + Date.now().toString().slice(-6),
         docente: docente.nombre,
@@ -253,7 +253,7 @@ document.getElementById('form-nomina').addEventListener('submit', (e) => {
         deduccionSeguroISRMonto,
         totalNeto
     };
-    historialRecibos.unshift(nuevoRecibo); 
+    historialRecibos.unshift(nuevoRecibo);
     guardarDatos();
     generarReciboPantalla(nuevoRecibo, docente);
 });
@@ -276,7 +276,7 @@ function obtenerHTMLRecibo(recibo, docente) {
                 <span>${docente.matricula}</span>
             </div>
             <div class="receipt-row">
-                <span><strong>Departamento:</strong></span>
+                <span><strong>Carrera / Materia:</strong></span>
                 <span>${docente.depto}</span>
             </div>
             <hr style="margin: 15px 0; border: 1px dashed #cbd5e1;">
@@ -350,9 +350,9 @@ function renderizarHistorial(filtro = '') {
     const filtrados = historialRecibos.filter(r => {
         const docenteNombre = r.docente.toLowerCase();
         const fechaTxt = new Date(r.fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }).toLowerCase();
-        return r.id.toLowerCase().includes(busqueda) || 
-               docenteNombre.includes(busqueda) || 
-               fechaTxt.includes(busqueda);
+        return r.id.toLowerCase().includes(busqueda) ||
+            docenteNombre.includes(busqueda) ||
+            fechaTxt.includes(busqueda);
     });
     if (filtrados.length === 0) {
         emptyState.style.display = 'block';
@@ -391,7 +391,7 @@ function eliminarRecibo(reciboId, enPerfil) {
     if (confirm('¿Estás seguro de que deseas eliminar permanentemente este recibo? (Folio: ' + reciboId + ')')) {
         const recibo = historialRecibos.find(r => r.id === reciboId);
         historialRecibos = historialRecibos.filter(r => r.id !== reciboId);
-        guardarDatos(); 
+        guardarDatos();
         if (enPerfil && recibo) {
             abrirPerfilDocente(recibo.docenteId);
         }
@@ -403,8 +403,8 @@ function abrirPerfilDocente(docenteId) {
     const historialPersonal = historialRecibos.filter(r => r.docenteId === docenteId);
     const gananciaTotal = historialPersonal.reduce((sum, r) => sum + r.totalNeto, 0);
     const horasTotales = historialPersonal.reduce((sum, r) => sum + r.horas, 0);
-    const ultimoPago = historialPersonal.length > 0 
-        ? new Date(historialPersonal[0].fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' }) 
+    const ultimoPago = historialPersonal.length > 0
+        ? new Date(historialPersonal[0].fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' })
         : 'Sin pagos';
     document.getElementById('perfil-nombre').innerText = docente.nombre;
     document.getElementById('perfil-puesto').innerText = docente.depto;
@@ -483,12 +483,12 @@ modal.addEventListener('click', (e) => {
 });
 
 const modalVerRecibo = document.getElementById('modal-ver-recibo');
-if(document.getElementById('btn-close-recibo')) {
+if (document.getElementById('btn-close-recibo')) {
     document.getElementById('btn-close-recibo').addEventListener('click', () => {
         modalVerRecibo.classList.remove('active');
     });
 }
-if(modalVerRecibo) {
+if (modalVerRecibo) {
     modalVerRecibo.addEventListener('click', (e) => {
         if (e.target === modalVerRecibo) modalVerRecibo.classList.remove('active');
     });
