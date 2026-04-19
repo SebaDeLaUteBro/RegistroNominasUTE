@@ -34,6 +34,7 @@
             <div class="sidebar-footer">
                 <p>Estadía UTE © 2026</p>
                 <p style="font-size: 0.7rem; margin-top: 5px;">Universidad Tecnológica General Mariano Escobedo</p>
+                <button class="btn btn-danger" style="margin-top: 15px; width: 100%; border-radius: 8px; font-size: 0.8rem; padding: 8px 0; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger);" onclick="limpiarBaseDatos()" title="Borrar todos los datos de prueba"><i class="fa-solid fa-trash-can"></i> Limpiar Sistema</button>
             </div>
         </aside>
         <main class="main-content">
@@ -86,14 +87,22 @@
                             </div>
                         </div>
                     </div>
-                    <div class="dashboard-illustration fade-in" style="animation-delay: 0.5s">
-                        <div class="welcome-banner glass-panel">
-                            <div class="banner-content">
-                                <h2>Sistema de Control de Nóminas</h2>
-                                <p>Gestión y administración eficiente de pagos para personal docente. Controla tarifas por hora, registro de horas impartidas y generación de recibos de manera centralizada.</p>
-                                <button class="btn btn-primary mt-4" onclick="document.querySelector('[data-target=\'docentes\']').click()">Registrar Nuevo Docente</button>
+                    <div class="dashboard-charts-grid">
+                        <div class="glass-panel fade-in" style="animation-delay: 0.5s; padding: 24px;">
+                            <h3 style="margin-bottom: 20px; color: var(--text-muted); font-size: 1.1rem; font-weight: 600;">Desembolso de Nóminas en el Tiempo</h3>
+                            <div style="position: relative; height: 300px; width: 100%;">
+                                <canvas id="dashboard-chart"></canvas>
                             </div>
-                            <i class="fa-brands fa-js banner-icon"></i>
+                        </div>
+                        <div class="dashboard-illustration fade-in" style="animation-delay: 0.6s;">
+                            <div class="welcome-banner glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 30px;">
+                                <div class="banner-content">
+                                    <h2 style="font-size: 1.6rem;">Sistema de Nóminas</h2>
+                                    <p style="font-size: 0.9rem;">Controla tarifas, sueldos fijos y comprobantes fiscales.</p>
+                                    <button class="btn btn-primary mt-4 w-100" onclick="document.querySelector('[data-target=\'docentes\']').click()">Registrar Docente</button>
+                                </div>
+                                <i class="fa-brands fa-js banner-icon" style="font-size: 120px; bottom: -20px; right: -10px;"></i>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -101,6 +110,7 @@
                     <div class="view-header fade-in">
                         <h2>Directorio de Docentes</h2>
                         <div style="display: flex; gap: 16px;">
+                            <button class="btn btn-secondary" onclick="exportarCSV('docentes')"><i class="fa-solid fa-file-csv"></i> Exportar</button>
                             <div class="input-icon" style="width: 250px;">
                                 <i class="fa-solid fa-search"></i>
                                 <input type="text" id="buscar-docente" placeholder="Buscar docente...">
@@ -145,7 +155,17 @@
                                         <option value="">-- Elige un docente --</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" style="display: flex; gap: 10px;">
+                                    <div style="flex: 1;">
+                                        <label>Inicio del Período</label>
+                                        <input type="date" id="input-fecha-inicio" required>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <label>Fin del Período</label>
+                                        <input type="date" id="input-fecha-fin" required>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="group-horas">
                                     <label>Horas impartidas (Quincena/Mes)</label>
                                     <input type="number" id="input-horas" min="1" placeholder="Ej. 40" required>
                                 </div>
@@ -187,9 +207,12 @@
                 <section id="historial" class="view">
                     <div class="view-header fade-in">
                         <h2>Historial de Nóminas Generadas</h2>
-                        <div class="input-icon" style="width: 300px;">
-                            <i class="fa-solid fa-search"></i>
-                            <input type="text" id="buscar-historial" placeholder="Buscar por año, mes o docente...">
+                        <div style="display: flex; gap: 16px;">
+                            <button class="btn btn-secondary" onclick="exportarCSV('historial')"><i class="fa-solid fa-file-csv"></i> Exportar</button>
+                            <div class="input-icon" style="width: 300px;">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" id="buscar-historial" placeholder="Buscar por año, mes o docente...">
+                            </div>
                         </div>
                     </div>
                     <div class="table-container glass-panel fade-in" style="animation-delay: 0.1s">
@@ -305,6 +328,9 @@
                         <i class="fa-solid fa-lock"></i>
                         <input type="password" id="login-pass" placeholder="***" required>
                     </div>
+                    <div style="text-align: right; margin-top: 8px;">
+                        <a href="#" onclick="alert('Por seguridad, contacta al departamento de TI o al administrador del sistema de la Universidad para restablecer tus credenciales.'); return false;" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 500; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">¿Olvidaste tu contraseña?</a>
+                    </div>
                 </div>
                 <p id="login-error" style="color: var(--danger); font-size: 0.85rem; display: none; margin-bottom: 10px;">Usuario o contraseña incorrectos.</p>
                 <button type="submit" class="btn btn-primary w-100">
@@ -346,7 +372,18 @@
                     <input type="text" id="docente-depto" placeholder="Ej. Sistemas Computacionales" required>
                 </div>
                 <div class="form-group">
-                    <label>Salario por Hora ($)</label>
+                    <label>Tipo de Pago</label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-money-check-dollar"></i>
+                        <select id="docente-tipo-pago" required>
+                            <option value="hora">Por Hora</option>
+                            <option value="quincenal">Sueldo Fijo Quincenal</option>
+                            <option value="mensual">Sueldo Fijo Mensual</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label id="label-tarifa">Salario por Hora ($)</label>
                     <div class="input-icon">
                         <i class="fa-solid fa-dollar-sign"></i>
                         <input type="number" id="docente-tarifa" step="0.01" placeholder="0.00" required>
@@ -369,6 +406,20 @@
             </form>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div id="toast-container" class="toast-container"></div>
+    <style>
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: #fff; color: #1e293b; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateX(120%); opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); border-left: 4px solid var(--primary); }
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast-success { border-left-color: var(--success); }
+        .toast-danger { border-left-color: var(--danger); }
+        .toast-info { border-left-color: var(--primary); }
+        .toast i { font-size: 1.2rem; }
+        .toast-success i { color: var(--success); }
+        .toast-danger i { color: var(--danger); }
+        .toast-info i { color: var(--primary); }
+    </style>
     <script src="app.js"></script>
 </body>
 </html>
