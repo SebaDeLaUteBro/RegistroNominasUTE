@@ -9,6 +9,62 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!isAuthenticated) return;
     iniciarAplicacion();
 });
+function mostrarToast(mensaje, tipo = 'info') {
+    const contenedor = document.getElementById('toast-container');
+    if (!contenedor) return;
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${tipo}`;
+    let icon = 'fa-info-circle';
+    if (tipo === 'success') icon = 'fa-check-circle';
+    if (tipo === 'danger') icon = 'fa-exclamation-circle';
+    toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${mensaje}</span>`;
+    contenedor.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function exportarCSV(tipo) {
+    let csv = '';
+    if (tipo === 'docentes') {
+        csv = 'Numero de Empleado,Nombre,Carrera,Tipo de Pago,Tarifa/Sueldo,Estado\n';
+        docentes.forEach(d => {
+            csv += `"${d.matricula}","${d.nombre}","${d.depto}","${d.tipoPago || 'hora'}","${d.tarifa}","${d.estado}"\n`;
+        });
+    } else if (tipo === 'historial') {
+        csv = 'Folio,Fecha de Emision,Periodo Inicio,Periodo Fin,Docente,Tipo Pago,Horas,Subtotal Bruto,Faltas,Deducciones,Total Neto\n';
+        historialRecibos.forEach(r => {
+            let fInicio = r.fechaInicio ? new Date(r.fechaInicio).toLocaleDateString('es-MX', { timeZone: 'UTC' }) : 'N/A';
+            let fFin = r.fechaFin ? new Date(r.fechaFin).toLocaleDateString('es-MX', { timeZone: 'UTC' }) : 'N/A';
+            csv += `"${r.id}","${new Date(r.fecha).toLocaleDateString('es-MX')}","${fInicio}","${fFin}","${r.docente}","${r.tipoPago || 'hora'}","${r.horas}","${r.subtotalBruto.toFixed(2)}","${r.faltas}","${r.deduccionSeguroISRMonto.toFixed(2)}","${r.totalNeto.toFixed(2)}"\n`;
+        });
+    }
+    const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `edupay_export_${tipo}_${new Date().getTime()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    mostrarToast('Exportación descargada correctamente', 'success');
+}
+
+function limpiarBaseDatos() {
+    if (confirm('¡ADVERTENCIA CRÍTICA!\n\nEstás a punto de borrar TODOS los docentes y TODO el historial de recibos.\n\nEsta acción NO se puede deshacer y el sistema quedará totalmente en blanco.\n\n¿Estás absolutamente seguro de continuar?')) {
+        const confirmar2 = prompt('Para confirmar de forma definitiva, escribe la palabra "borrar" en minúsculas:');
+        if (confirmar2 === 'borrar') {
+            docentes = [];
+            historialRecibos = [];
+            guardarDatos();
+            mostrarToast('Base de datos limpiada. El sistema está en blanco.', 'danger');
+            setTimeout(() => location.reload(), 1500);
+        }
+    }
+}
+
 function iniciarAplicacion() {
     actualizarDashboard();
     renderizarTabla();
@@ -99,6 +155,8 @@ function configurarNavegacion() {
         });
     });
 }
+let chartInstance = null;
+
 function actualizarDashboard() {
     document.getElementById('stat-total-docentes').innerText = docentes.length;
     let sumaTarifas = docentes.reduce((sum, d) => sum + parseFloat(d.tarifa), 0);
@@ -107,6 +165,58 @@ function actualizarDashboard() {
     document.getElementById('stat-total-nominas').innerText = historialRecibos.length;
     let desembolsoTotal = historialRecibos.reduce((sum, r) => sum + r.totalNeto, 0);
     document.getElementById('stat-desembolso-total').innerText = `$${desembolsoTotal.toFixed(2)}`;
+    
+    renderizarGraficoDashboard();
+}
+
+function renderizarGraficoDashboard() {
+    const ctx = document.getElementById('dashboard-chart');
+    if (!ctx) return;
+    
+    const dataMeses = {};
+    const nombresMeses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    
+    for (let i = 5; i >= 0; i--) {
+        let d = new Date();
+        d.setMonth(d.getMonth() - i);
+        dataMeses[`${nombresMeses[d.getMonth()]} ${d.getFullYear()}`] = 0;
+    }
+
+    historialRecibos.forEach(r => {
+        let date = new Date(r.fecha);
+        let key = `${nombresMeses[date.getMonth()]} ${date.getFullYear()}`;
+        if (dataMeses[key] !== undefined) {
+            dataMeses[key] += r.totalNeto;
+        }
+    });
+
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(dataMeses),
+            datasets: [{
+                label: 'Desembolso Total ($)',
+                data: Object.values(dataMeses),
+                backgroundColor: 'rgba(0, 141, 151, 0.7)',
+                borderColor: '#008D97',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                x: { grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
 }
 function guardarDatos() {
     localStorage.setItem('edupay_docentes', JSON.stringify(docentes));
@@ -124,22 +234,32 @@ function configurarBuscador() {
     });
 }
 const formDocente = document.getElementById('form-docente');
+
+document.getElementById('docente-tipo-pago').addEventListener('change', (e) => {
+    const label = document.getElementById('label-tarifa');
+    if (e.target.value === 'quincenal') label.innerText = 'Sueldo Fijo Quincenal ($)';
+    else if (e.target.value === 'mensual') label.innerText = 'Sueldo Fijo Mensual ($)';
+    else label.innerText = 'Salario por Hora ($)';
+});
+
 formDocente.addEventListener('submit', (e) => {
     e.preventDefault();
     const matricula = document.getElementById('docente-matricula').value;
     const nombre = document.getElementById('docente-nombre').value;
     const depto = document.getElementById('docente-depto').value;
+    const tipoPago = document.getElementById('docente-tipo-pago').value;
     const tarifa = parseFloat(document.getElementById('docente-tarifa').value);
     const estado = document.getElementById('docente-estado').value;
     if (editandoId) {
         const index = docentes.findIndex(d => d.id === editandoId);
-        docentes[index] = { id: editandoId, matricula, nombre, depto, tarifa, estado };
+        docentes[index] = { id: editandoId, matricula, nombre, depto, tipoPago, tarifa, estado };
     } else {
         const nuevoDocente = {
             id: Date.now().toString(),
             matricula,
             nombre,
             depto,
+            tipoPago,
             tarifa,
             estado
         };
@@ -147,6 +267,7 @@ formDocente.addEventListener('submit', (e) => {
     }
     guardarDatos();
     cerrarModal();
+    mostrarToast('Docente guardado correctamente', 'success');
 });
 function renderizarTabla(filtro = '') {
     const tbody = document.getElementById('tabla-docentes');
@@ -172,7 +293,10 @@ function renderizarTabla(filtro = '') {
             <td><strong>${docente.matricula}</strong></td>
             <td>${docente.nombre}</td>
             <td>${docente.depto}</td>
-            <td>$${parseFloat(docente.tarifa).toFixed(2)}</td>
+            <td>
+                $${parseFloat(docente.tarifa).toFixed(2)}<br>
+                <small style="color:var(--text-muted)">${docente.tipoPago === 'quincenal' ? 'Fijo Quincenal' : docente.tipoPago === 'mensual' ? 'Fijo Mensual' : 'Por Hora'}</small>
+            </td>
             <td><span class="${badgeClass}" style="padding: 4px 10px; border-radius: 100px; font-size: 0.75rem; font-weight: 700;">${badgeText}</span></td>
             <td class="actions-cell">
                 <button class="btn btn-primary btn-icon" onclick="abrirPerfilDocente('${docente.id}')" title="Ver Perfil">
@@ -197,6 +321,11 @@ function editarDocente(id) {
     document.getElementById('docente-matricula').value = docente.matricula;
     document.getElementById('docente-nombre').value = docente.nombre;
     document.getElementById('docente-depto').value = docente.depto;
+    document.getElementById('docente-tipo-pago').value = docente.tipoPago || 'hora';
+    const labelTarifa = document.getElementById('label-tarifa');
+    if (docente.tipoPago === 'quincenal') labelTarifa.innerText = 'Sueldo Fijo Quincenal ($)';
+    else if (docente.tipoPago === 'mensual') labelTarifa.innerText = 'Sueldo Fijo Mensual ($)';
+    else labelTarifa.innerText = 'Salario por Hora ($)';
     document.getElementById('docente-tarifa').value = docente.tarifa;
     document.getElementById('docente-estado').value = docente.estado || 'activo';
     abrirModal();
@@ -205,6 +334,7 @@ function eliminarDocente(id) {
     if (confirm('¿Estás seguro de que deseas eliminar este docente?')) {
         docentes = docentes.filter(d => d.id !== id);
         guardarDatos();
+        mostrarToast('Docente eliminado', 'danger');
     }
 }
 function llenarSelectNómina() {
@@ -214,25 +344,68 @@ function llenarSelectNómina() {
     docentesActivos.forEach(docente => {
         const option = document.createElement('option');
         option.value = docente.id;
-        option.innerText = `${docente.nombre} (${docente.matricula})`;
+        let tipo = 'Por Hora';
+        if (docente.tipoPago === 'quincenal') tipo = 'Fijo Quincenal';
+        if (docente.tipoPago === 'mensual') tipo = 'Fijo Mensual';
+        option.innerText = `${docente.nombre} (${docente.matricula}) - [${tipo}]`;
         select.appendChild(option);
     });
 }
+
+document.getElementById('select-docente').addEventListener('change', (e) => {
+    const docenteId = e.target.value;
+    const docente = docentes.find(d => d.id === docenteId);
+    const grupoHoras = document.getElementById('group-horas');
+    const inputHoras = document.getElementById('input-horas');
+    if (grupoHoras && inputHoras) {
+        if (docente && docente.tipoPago && docente.tipoPago !== 'hora') {
+            grupoHoras.style.display = 'none';
+            inputHoras.required = false;
+            inputHoras.value = '1';
+        } else {
+            grupoHoras.style.display = 'block';
+            inputHoras.required = true;
+            inputHoras.value = '';
+        }
+    }
+});
+
 document.getElementById('form-nomina').addEventListener('submit', (e) => {
     e.preventDefault();
     const docenteId = document.getElementById('select-docente').value;
     const horas = parseFloat(document.getElementById('input-horas').value);
+    const fechaInicio = document.getElementById('input-fecha-inicio').value;
+    const fechaFin = document.getElementById('input-fecha-fin').value;
+    
+    if (!fechaInicio || !fechaFin) {
+        mostrarToast('Por favor, selecciona el inicio y fin del período.', 'danger');
+        return;
+    }
+    
     const bono = parseFloat(document.getElementById('input-bono').value) || 0;
     const faltas = parseInt(document.getElementById('input-faltas').value) || 0;
     const retardos = parseInt(document.getElementById('input-retardos').value) || 0;
     const deduccionesPct = parseFloat(document.getElementById('input-deducciones').value) || 0;
     const docente = docentes.find(d => d.id === docenteId);
     if (!docente) return;
-    const gananciaHoras = docente.tarifa * horas;
-    const subtotalBruto = gananciaHoras + bono;
+    
+    let gananciaCalculada = 0;
+    let horasRegistro = horas;
+    if (docente.tipoPago && docente.tipoPago !== 'hora') {
+        gananciaCalculada = docente.tarifa;
+        horasRegistro = 0;
+    } else {
+        gananciaCalculada = docente.tarifa * horas;
+    }
+    const subtotalBruto = gananciaCalculada + bono;
     const penalizacionFaltas = faltas * COSTO_FALTA;
     const penalizacionRetardos = retardos * COSTO_RETARDO;
     const totalPenalizaciones = penalizacionFaltas + penalizacionRetardos;
+
+    if (subtotalBruto === 0) {
+        mostrarToast('Error: El docente no generó ingresos en este período.', 'danger');
+        return;
+    }
     const deduccionSeguroISRMonto = subtotalBruto * (deduccionesPct / 100);
     let totalNeto = subtotalBruto - deduccionSeguroISRMonto - totalPenalizaciones;
     if (totalNeto < 0) totalNeto = 0;
@@ -241,7 +414,10 @@ document.getElementById('form-nomina').addEventListener('submit', (e) => {
         docente: docente.nombre,
         docenteId: docente.id,
         fecha: new Date().toISOString(),
-        horas,
+        fechaInicio: fechaInicio,
+        fechaFin: fechaFin,
+        horas: horasRegistro,
+        tipoPago: docente.tipoPago || 'hora',
         tarifa: docente.tarifa,
         bono,
         faltas,
@@ -256,6 +432,9 @@ document.getElementById('form-nomina').addEventListener('submit', (e) => {
     historialRecibos.unshift(nuevoRecibo);
     guardarDatos();
     generarReciboPantalla(nuevoRecibo, docente);
+    mostrarToast('Nómina generada con éxito', 'success');
+    document.getElementById('form-nomina').reset();
+    document.getElementById('select-docente').dispatchEvent(new Event('change'));
 });
 function obtenerHTMLRecibo(recibo, docente) {
     const fechaFormat = new Date(recibo.fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -279,7 +458,19 @@ function obtenerHTMLRecibo(recibo, docente) {
                 <span><strong>Carrera / Materia:</strong></span>
                 <span>${docente.depto}</span>
             </div>
+            ${recibo.fechaInicio && recibo.fechaFin ? `
+            <div class="receipt-row">
+                <span><strong>Período Pagado:</strong></span>
+                <span>Del ${new Date(recibo.fechaInicio).toLocaleDateString('es-MX', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' })} al ${new Date(recibo.fechaFin).toLocaleDateString('es-MX', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            </div>
+            ` : ''}
             <hr style="margin: 15px 0; border: 1px dashed #cbd5e1;">
+            ${recibo.tipoPago && recibo.tipoPago !== 'hora' ? `
+            <div class="receipt-row">
+                <span>Sueldo Fijo (${recibo.tipoPago === 'quincenal' ? 'Quincenal' : 'Mensual'}):</span>
+                <span><b>$${recibo.tarifa.toFixed(2)}</b></span>
+            </div>
+            ` : `
             <div class="receipt-row">
                 <span>Tarifa por Hora:</span>
                 <span>$${parseFloat(recibo.tarifa).toFixed(2)}</span>
@@ -288,6 +479,7 @@ function obtenerHTMLRecibo(recibo, docente) {
                 <span>Horas Impartidas:</span>
                 <span>${recibo.horas} h &nbsp;&nbsp; -> &nbsp;&nbsp; <b>$${(recibo.tarifa * recibo.horas).toFixed(2)}</b></span>
             </div>
+            `}
             ${recibo.bono > 0 ? `
             <div class="receipt-row" style="color: var(--success);">
                 <span>Bono Extra/Asistencia:</span>
@@ -368,7 +560,7 @@ function renderizarHistorial(filtro = '') {
             <td><strong>${recibo.id}</strong></td>
             <td>${fechaFormat}</td>
             <td>${recibo.docente}</td>
-            <td>${recibo.horas} hrs</td>
+            <td>${recibo.tipoPago && recibo.tipoPago !== 'hora' ? 'Fijo (' + (recibo.tipoPago === 'quincenal' ? 'Q.' : 'M.') + ')' : recibo.horas + ' hrs'}</td>
             <td style="color: var(--primary); font-weight: 700;">$${recibo.totalNeto.toFixed(2)}</td>
             <td class="actions-cell">
                 <button class="btn btn-secondary btn-icon" onclick="reimprimirRecibo('${recibo.id}')" title="Ver Recibo">
@@ -392,6 +584,7 @@ function eliminarRecibo(reciboId, enPerfil) {
         const recibo = historialRecibos.find(r => r.id === reciboId);
         historialRecibos = historialRecibos.filter(r => r.id !== reciboId);
         guardarDatos();
+        mostrarToast('Recibo eliminado del historial', 'danger');
         if (enPerfil && recibo) {
             abrirPerfilDocente(recibo.docenteId);
         }
@@ -409,7 +602,7 @@ function abrirPerfilDocente(docenteId) {
     document.getElementById('perfil-nombre').innerText = docente.nombre;
     document.getElementById('perfil-puesto').innerText = docente.depto;
     document.getElementById('perfil-matricula').innerText = docente.matricula;
-    document.getElementById('perfil-tarifa').innerText = `$${parseFloat(docente.tarifa).toFixed(2)}`;
+    document.getElementById('perfil-tarifa').innerText = `$${parseFloat(docente.tarifa).toFixed(2)}${docente.tipoPago === 'quincenal' ? ' Fijo Q.' : docente.tipoPago === 'mensual' ? ' Fijo M.' : ''}`;
     document.getElementById('perfil-ganancias').innerText = `$${gananciaTotal.toFixed(2)}`;
     document.getElementById('perfil-horas-totales').innerText = horasTotales;
     document.getElementById('perfil-ultimo-pago').innerText = ultimoPago;
@@ -433,7 +626,12 @@ function abrirPerfilDocente(docenteId) {
         table.style.display = 'table';
         historialPersonal.forEach(recibo => {
             const fechaFormat = new Date(recibo.fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
-            let resumen = `${recibo.horas}h ($${(recibo.horas * recibo.tarifa).toFixed(2)})`;
+            let resumen = '';
+            if (recibo.tipoPago && recibo.tipoPago !== 'hora') {
+                resumen = `Fijo ($${recibo.tarifa.toFixed(2)})`;
+            } else {
+                resumen = `${recibo.horas}h ($${(recibo.horas * recibo.tarifa).toFixed(2)})`;
+            }
             if (recibo.bono > 0) resumen += ` + Bono ($${recibo.bono})`;
             let penalizaciones = [];
             if (recibo.faltas > 0) penalizaciones.push(`${recibo.faltas} Faltas`);
@@ -468,6 +666,8 @@ document.getElementById('btn-nuevo-docente').addEventListener('click', () => {
     document.getElementById('modal-title').innerText = 'Registrar Nuevo Docente';
     formDocente.reset();
     document.getElementById('docente-estado').value = 'activo';
+    document.getElementById('docente-tipo-pago').value = 'hora';
+    document.getElementById('label-tarifa').innerText = 'Salario por Hora ($)';
     abrirModal();
 });
 document.getElementById('btn-close-modal').addEventListener('click', cerrarModal);
