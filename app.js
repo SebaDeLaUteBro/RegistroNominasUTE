@@ -159,12 +159,12 @@ let chartInstance = null;
 
 function actualizarDashboard() {
     document.getElementById('stat-total-docentes').innerText = docentes.length;
-    let sumaTarifas = docentes.reduce((sum, d) => sum + parseFloat(d.tarifa), 0);
-    let promedio = docentes.length ? (sumaTarifas / docentes.length) : 0;
-    document.getElementById('stat-promedio-hora').innerText = `$${promedio.toFixed(2)}`;
     document.getElementById('stat-total-nominas').innerText = historialRecibos.length;
     let desembolsoTotal = historialRecibos.reduce((sum, r) => sum + r.totalNeto, 0);
     document.getElementById('stat-desembolso-total').innerText = `$${desembolsoTotal.toFixed(2)}`;
+    
+    let promedio = historialRecibos.length ? (desembolsoTotal / historialRecibos.length) : 0;
+    document.getElementById('stat-pago-promedio').innerText = `$${promedio.toFixed(2)}`;
     
     renderizarGraficoDashboard();
 }
@@ -199,7 +199,7 @@ function renderizarGraficoDashboard() {
         data: {
             labels: Object.keys(dataMeses),
             datasets: [{
-                label: 'Desembolso Total ($)',
+                label: 'Total Pagado ($)',
                 data: Object.values(dataMeses),
                 backgroundColor: 'rgba(0, 141, 151, 0.7)',
                 borderColor: '#008D97',
@@ -505,7 +505,7 @@ function obtenerHTMLRecibo(recibo, docente) {
                 <span>- $${recibo.penalizacionRetardos.toFixed(2)}</span>
             </div>` : ''}
             <div class="receipt-row receipt-total">
-                <span>TOTAL NETO A PAGAR:</span>
+                <span>NETO A PAGAR:</span>
                 <span>$${recibo.totalNeto.toFixed(2)}</span>
             </div>
             <div style="margin-top: 20px; text-align: center;" class="no-print">
@@ -602,7 +602,7 @@ function abrirPerfilDocente(docenteId) {
     document.getElementById('perfil-nombre').innerText = docente.nombre;
     document.getElementById('perfil-puesto').innerText = docente.depto;
     document.getElementById('perfil-matricula').innerText = docente.matricula;
-    document.getElementById('perfil-tarifa').innerText = `$${parseFloat(docente.tarifa).toFixed(2)}${docente.tipoPago === 'quincenal' ? ' Fijo Q.' : docente.tipoPago === 'mensual' ? ' Fijo M.' : ''}`;
+    document.getElementById('perfil-tarifa').innerText = `$${parseFloat(docente.tarifa).toFixed(2)}${docente.tipoPago === 'quincenal' ? ' Fijo Q.' : docente.tipoPago === 'mensual' ? ' Fijo M.' : ' /hr'}`;
     document.getElementById('perfil-ganancias').innerText = `$${gananciaTotal.toFixed(2)}`;
     document.getElementById('perfil-horas-totales').innerText = horasTotales;
     document.getElementById('perfil-ultimo-pago').innerText = ultimoPago;
