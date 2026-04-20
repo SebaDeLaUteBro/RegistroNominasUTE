@@ -68,8 +68,8 @@
                         <div class="stat-card glass-panel fade-in" style="animation-delay: 0.2s">
                             <div class="stat-icon icon-green"><i class="fa-solid fa-sack-dollar"></i></div>
                             <div class="stat-info">
-                                <h3>Promedio x Hora</h3>
-                                <p id="stat-promedio-hora">$0.00</p>
+                                <h3>Pago Promedio</h3>
+                                <p id="stat-pago-promedio">$0.00</p>
                             </div>
                         </div>
                         <div class="stat-card glass-panel fade-in" style="animation-delay: 0.3s">
@@ -82,14 +82,14 @@
                         <div class="stat-card glass-panel fade-in" style="animation-delay: 0.4s">
                             <div class="stat-icon" style="background: linear-gradient(135deg, #ec4899, #be185d); color: white; box-shadow: 0 10px 20px rgba(236, 72, 153, 0.3);"><i class="fa-solid fa-money-bill-trend-up"></i></div>
                             <div class="stat-info">
-                                <h3>Desembolso Total</h3>
+                                <h3>Total Pagado</h3>
                                 <p id="stat-desembolso-total">$0.00</p>
                             </div>
                         </div>
                     </div>
                     <div class="dashboard-charts-grid">
                         <div class="glass-panel fade-in" style="animation-delay: 0.5s; padding: 24px;">
-                            <h3 style="margin-bottom: 20px; color: var(--text-muted); font-size: 1.1rem; font-weight: 600;">Desembolso de Nóminas en el Tiempo</h3>
+                            <h3 style="margin-bottom: 20px; color: var(--text-muted); font-size: 1.1rem; font-weight: 600;">Total Pagado en Nómina</h3>
                             <div style="position: relative; height: 300px; width: 100%;">
                                 <canvas id="dashboard-chart"></canvas>
                             </div>
@@ -222,8 +222,8 @@
                                     <th>Folio</th>
                                     <th>Fecha</th>
                                     <th>Docente</th>
-                                    <th>Horas Impartidas</th>
-                                    <th>Total Neto</th>
+                                    <th>Horas/Asignación</th>
+                                    <th>Neto</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -266,7 +266,7 @@
                                 </div>
                                 <div style="background: rgba(0,0,0,0.03); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); min-width: 140px;">
                                     <span style="display:block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;"><i class="fa-solid fa-dollar-sign"></i> Tarifa Base</span>
-                                    <strong id="perfil-tarifa" style="font-size: 1.1rem; color: var(--primary);">-</strong><span style="font-size: 0.8rem;"> /hr</span>
+                                    <strong id="perfil-tarifa" style="font-size: 1.1rem; color: var(--primary);">-</strong>
                                 </div>
                                 <div style="background: rgba(0,0,0,0.03); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); min-width: 140px;">
                                     <span style="display:block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;"><i class="fa-solid fa-clock"></i> Horas Totales</span>
